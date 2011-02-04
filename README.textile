@@ -1,0 +1,30 @@
+h2. Architecture
+
+This plugin creates FrameStreams out of a Websocket Upgrade Handshake request.
+This play.data.FrameStream object is forwarded to the play mvc stack for use.
+
+For example, in the controller:
+bc. static void webscoketEndpoint1(ChunkStream inboundStream, ChunkStream outboundStream) { }
+
+At the Play Controller method you created, you attach a listener to subscribe to this FrameStream.
+Further inbound frames sent from the client(browser) to the server, is handled directly by your subscribed listeners.
+Another Outbound Framestream is available (for your controller-method or listener) to write to.
+
+h2. Usage
+
+Unpack dist/websocket*.zip to you play directory modules folder.
+Then execute: play new MyNewApp --with=websocket
+Add "*     /              module:websocket" to your conf/routes files.
+Go to "http://localhost:9000/websocket/echotest" and enjoy!
+
+Look at app/controllers/websocket/EchoTest.java to learn how the EchoTest functions.
+Copy this into your own app/controllers/Application.java
+
+h2. Intended Audience
+
+This module is meant for eventual handoff to your own listeners.
+It uses Play's Routing and ActionInvocation for the handshake, but every new data frame will skip all those layers afterwards.
+This is good for performance (about as fast as given by a native jboss netty handler).
+This module was created to point at Scala/Akka actors (using the play-akka module), who will process your incoming data at levels of massive scalability.
+
+For an alternative implementation, that uses Play Continuations (and uses the play mvc stack for every websocket frame received), look at: "Pepite's branch":http://github.com/pepite/play/blob/websockets/framework/src/play/server/websocket/WebSocketServerHandler.java
