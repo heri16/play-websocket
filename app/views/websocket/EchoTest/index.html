@@ -1,0 +1,36 @@
+<html>
+    <head><title>Websocket Echo Test</title></head>
+    <body>
+      <script type="text/javascript">
+        var hostname = window.location.hostname + ":" + window.location.port;
+        var wsuri = "ws://" + hostname + "@{websocket.EchoTest.echomsg()}";
+
+        var socket;
+        if (window.WebSocket) {
+          socket = new WebSocket(wsuri);
+          socket.onmessage = function(event) { alert(event.data); document.getElementById("result").innerHTML += event.data + "<br />"; };
+          socket.onopen = function(event) { alert("Web Socket opened!"); };
+          socket.onclose = function(event) { alert("Web Socket closed."); };
+        } else {
+          alert("Your browser does not support Websockets.");
+        }
+
+        var socketOpenState = WebSocket.OPEN ? WebSocket.OPEN : 1;
+        function send(message) {
+          if (!window.WebSocket) { return; }
+          if (socket.readyState == socketOpenState) {
+            socket.send(message);
+          } else {
+            alert("The socket state is not open.");
+          }
+        }
+      </script>
+      <form onsubmit="return false;">
+        <input type="text" name="message" value="Hello, World!"/>
+        <input type="button" value="Send Message" onclick="send(this.form.message.value)" />
+      </form>
+      <br />
+      <strong>Replies:</strong><br />
+      <div id="result"></div>
+    </body>
+</html>
